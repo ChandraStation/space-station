@@ -1,0 +1,37 @@
+{
+  "files": {
+    "main.css": "/static/css/main.e769b1a5.chunk.css",
+    "main.js": "/static/js/main.258bd66c.chunk.js",
+    "main.js.map": "/static/js/main.258bd66c.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.7dda25ee.js",
+    "runtime-main.js.map": "/static/js/runtime-main.7dda25ee.js.map",
+    "static/css/2.30c82207.chunk.css": "/static/css/2.30c82207.chunk.css",
+    "static/js/2.6976ba1d.chunk.js": "/static/js/2.6976ba1d.chunk.js",
+    "static/js/2.6976ba1d.chunk.js.map": "/static/js/2.6976ba1d.chunk.js.map",
+    "index.html": "/index.html",
+    "static/css/2.30c82207.chunk.css.map": "/static/css/2.30c82207.chunk.css.map",
+    "static/css/main.e769b1a5.chunk.css.map": "/static/css/main.e769b1a5.chunk.css.map",
+    "static/js/2.6976ba1d.chunk.js.LICENSE.txt": "/static/js/2.6976ba1d.chunk.js.LICENSE.txt",
+    "static/media/akash-logo.e8405f06.svg": "/static/media/akash-logo.e8405f06.svg",
+    "static/media/arrow-no-tail.81927c11.svg": "/static/media/arrow-no-tail.81927c11.svg",
+    "static/media/App.css": "/static/media/bg-light.393e43fa.svg",
+    "static/media/cosmos-chain-logo.012b02ea.png": "/static/media/cosmos-chain-logo.012b02ea.png",
+    "static/media/cre-chain-logo.ef11be2b.png": "/static/media/cre-chain-logo.ef11be2b.png",
+    "static/media/dark-theme-icon.27caff57.svg": "/static/media/dark-theme-icon.27caff57.svg",
+    "static/media/light-theme-icon.142326c8.svg": "/static/media/light-theme-icon.142326c8.svg",
+    "static/media/logo-black.fa1f43bf.svg": "/static/media/logo-black.fa1f43bf.svg",
+    "static/media/logo-white.1ae1664c.svg": "/static/media/logo-white.1ae1664c.svg",
+    "static/media/secret-chain-logo.0cf6d4fd.png": "/static/media/secret-chain-logo.0cf6d4fd.png",
+    "static/media/stargaze-chain-logo.c98fe737.png": "/static/media/stargaze-chain-logo.c98fe737.png",
+    "static/media/unification-chain-logo.77644933.png": "/static/media/unification-chain-logo.77644933.png",
+    "static/media/unification-logo.a61e2229.png": "/static/media/unification-logo.a61e2229.png",
+    "static/media/warn-icon.db0810d7.svg": "/static/media/warn-icon.db0810d7.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.7dda25ee.js",
+    "static/css/2.30c82207.chunk.css",
+    "static/js/2.6976ba1d.chunk.js",
+    "static/css/main.e769b1a5.chunk.css",
+    "static/js/main.258bd66c.chunk.js"
+  ]
+}
