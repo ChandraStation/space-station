@@ -39,13 +39,13 @@ export enum SupportedCosmosChain {
   Osmosis = 'osmosis',
   Stargaze = 'stargaze',
   Cosmos = 'cosmos',
-  Canto = 'canto',
   Cheqd = 'cheqd',
   Iris = 'iris',
   Chihuahua = 'chihuahua',
   Nyx = 'nyx',
   Crescent = 'crescent',
   Secret = 'secret',
+  Canto = 'canto',
   Evmos = 'evmos',
   Unification = 'unification'
 }

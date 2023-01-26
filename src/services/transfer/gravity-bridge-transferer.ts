@@ -1,7 +1,6 @@
 import {
   BridgeFee,
   BroadcastSource,
-  ChainFee,
   IToken,
   ITransfer,
   SupportedChain,
@@ -18,6 +17,7 @@ import ethWalletManger from 'services/eth-wallet/eth-wallet-manager';
 import gravityBridgeMessageService from 'services/cosmos-tx/gravity-bridge-message-service';
 import loggerFactory from 'services/util/logger-factory';
 import typeHelper from 'services/util/type-helper';
+import axios from 'axios';
 
 const logger = loggerFactory.getLogger('[GravityBridgeTransferer]');
 
@@ -165,38 +165,58 @@ function isSendCosmosResponse (response: unknown): response is SendToCosmosRespo
   return (response as SendToCosmosResponse).transactionHash !== undefined;
 }
 
-function getFees (fromChain: SupportedChain, token: IToken, tokenPrice: string): BridgeFee[] {
+async function getFees (fromChain: SupportedChain, token: IToken, tokenPrice: string): Promise<BridgeFee[]> {
+  let fees: BridgeFee[] = []
   if (fromChain === SupportedChain.GravityBridge) {
     if (token.erc20) {
       const erc20Token = token.erc20;
-      return _.map([6, 20, 100], (usdFee, i) => ({
-        id: i,
-        label: getFeeLabel(usdFee),
+      const feeAmount = await getErc20FeeAmount(erc20Fee);
+      const slowFee = feeAmount;
+      const fastFee = feeAmount * 2;
+      const instantFee = feeAmount * 4;
+      fees.push({
+        id: 1,
+        label: `Slow (${slowFee} USD)`,
         denom: erc20Token.symbol,
-        amount: Big(usdFee).div(tokenPrice).round(6, Big.roundDown).toString(),
-        amountInCurrency: usdFee.toString()
-      }));
-    } else if (token.cosmos) {
-      const cosmosToken = token.cosmos;
-      return _.map([6, 20, 100], (usdFee, i) => ({
-        id: i,
-        label: getFeeLabel(usdFee),
-        denom: cosmosToken.symbol,
-        amount: Big(usdFee).div(tokenPrice).round(6, Big.roundDown).toString(),
-        amountInCurrency: usdFee.toString()
-      }));
+        amount: Big(slowFee).div(tokenPrice).round(6, Big.roundDown).toString(),
+        amountInCurrency: slowFee.toString()
+      });
+      fees.push({
+        id: 2,
+        label: `fast (${fastFee} USD)`,
+        denom: erc20Token.symbol,
+        amount: Big(fastFee).div(tokenPrice).round(6, Big.roundDown).toString(),
+        amountInCurrency: fastFee.toString()
+      });
+      fees.push({
+        id: 3,
+        label: `instant (${instantFee} USD)`,
+        denom: erc20Token.symbol,
+        amount: Big(instantFee).div(tokenPrice).round(6, Big.roundDown).toString(),
+        amountInCurrency: instantFee.toString()
+      });
     }
   }
-
-  return [];
+  return fees;
 }
 
-function getFeeLabel (usdFee: number): string {
-  switch (usdFee) {
-    case 6: return 'Average 4 hours';
-    case 20: return 'Within an hour';
-    case 100: return 'Instantly';
-    default: return 'Unknown';
+async function getErc20FeeAmount (token: IToken): Promise<number> {
+  try {
+    const response = await axios.get('https://info.gravitychain.io:9000/gravity_bridge_info');
+    const pendingBatches = response.data.pending_batches;
+    let erc20Fee = 0;
+    for (let i = 0; i < pendingBatches.length; i++) {
+      const batch = pendingBatches[i];
+      for (let j = 0; j < batch.transactions.length; j++) {
+        const transaction = batch.transactions[j];
+        if (transaction.erc20_token.contract === token.erc20) {
+          erc20Fee += transaction.erc20_fee.amount;
+        }
+      }
+    }
+    return erc20Fee;
+  } catch (error) {
+    throw new Error('An error occurred while retrieving the fee amount');
   }
 }
 
