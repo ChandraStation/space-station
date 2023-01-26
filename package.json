@@ -1,11 +1,7 @@
 {
   "name": "gravity-bridge-dapp",
   "version": "0.0.1",
-<<<<<<< dev
   "homepage": "https://bridge.chandrastation.com/",
-=======
-  "homepage": "https://bridge.chandrastation.com",
->>>>>>> main
   "private": true,
   "dependencies": {
     "@cosmjs/launchpad": "^0.26.5",
