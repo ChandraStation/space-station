@@ -166,7 +166,7 @@ function isSendCosmosResponse (response: unknown): response is SendToCosmosRespo
 }
 
 async function getFees (fromChain: SupportedChain, token: IToken, tokenPrice: string): Promise<BridgeFee[]> {
-  let fees: BridgeFee[] = []
+  const fees: BridgeFee[] = [];
   if (fromChain === SupportedChain.GravityBridge) {
     if (token.erc20) {
       const erc20Token = token.erc20;
