@@ -35,19 +35,30 @@ function getPriceDenom (selectedToken: IToken): string {
 }
 
 const FeeSelector: React.FC<FeeSelectorProps> = ({ fromChain, toChain, selectedToken, currency, amount, balance, select, selectedFee }) => {
+  const [fees, setFees] = useState(null);
   const priceDenom = getPriceDenom(selectedToken);
   const tokenPrice = usePrice(currency, priceDenom);
   const _tokenPrice = new Big(tokenPrice?.current_price || '1').toString();
-  const fees = transferer.getFees(fromChain, toChain, selectedToken, _tokenPrice);
-  logger.info('denom:', priceDenom, 'Fees:', fees);
 
   useEffect(() => {
-    if (selectedFee) {
-      const fee = _.find(fees, { id: selectedFee.id });
+    async function fetchFees (): Promise<void> {
+      try {
+        const feesData = await transferer.getFees(fromChain, toChain, selectedToken, _tokenPrice);
+        setFees(feesData);
+      } catch (error) {
+        logger.error(error);
+      }
+    }
+    fetchFees();
+  }, [fromChain, toChain, selectedToken, _tokenPrice]);
+
+  useEffect(() => {
+    if (selectedFee && fees) {
+      const fee = fees.find((f: any) => f.id === selectedFee.id);
       if (fee && !isSameFee(fee, selectedFee)) {
         select(fee);
       }
-    } else if (!_.isEmpty(fees)) {
+    } else if (fees && fees.length > 0) {
       select(fees[0]);
     }
   }, [fromChain, selectedToken, selectedFee, fees]);
@@ -57,12 +68,16 @@ const FeeSelector: React.FC<FeeSelectorProps> = ({ fromChain, toChain, selectedT
     select(fee);
   }, [select]);
 
-  const disableds: boolean[] = _.map(fees, (fee) => {
+  if (!fees) return null;
+
+  const disableds = fees.map((fee: any) => {
     try {
-      return Big(fee.amount).add(amount || '0').gt(balance);
+      const feeAmount = parseFloat(fee.amount);
+      const totalAmount = parseFloat(amount || '0') + feeAmount;
+      return totalAmount > parseFloat(balance);
     } catch (error) {
       logger.error(error, fee);
-      return true;
+      return undefined;
     }
   });
 
@@ -80,7 +95,7 @@ const FeeSelector: React.FC<FeeSelectorProps> = ({ fromChain, toChain, selectedT
               key={fee.id}
               className={classNames('fee-selector-fee-button', { selected: fee.id === selectedFee?.id })}
               onClick={onClickFee.bind(null, fee)}
-              disabled={disableds[i]}
+              disabled={disableds[i] ? disableds[i] : false}
             >
               <Text size="tiny" className="fee-button-text" muted={disableds[i]}>
                 {fee.label}
@@ -104,3 +119,6 @@ function isSameFee (feeA: BridgeFee, feeB: BridgeFee): boolean {
 }
 
 export default FeeSelector;
+function useState (_arg0: null): [any, any] {
+  throw new Error('Function not implemented.');
+}
