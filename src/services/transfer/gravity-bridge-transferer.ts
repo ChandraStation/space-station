@@ -170,7 +170,7 @@ async function getFees (fromChain: SupportedChain, token: IToken, tokenPrice: st
   if (fromChain === SupportedChain.GravityBridge) {
     if (token.erc20) {
       const erc20Token = token.erc20;
-      const feeAmount = await getErc20FeeAmount(erc20Fee);
+      const feeAmount = await getErc20FeeAmount(token);
       const slowFee = feeAmount;
       const fastFee = feeAmount * 2;
       const instantFee = feeAmount * 4;
@@ -183,14 +183,14 @@ async function getFees (fromChain: SupportedChain, token: IToken, tokenPrice: st
       });
       fees.push({
         id: 2,
-        label: `fast (${fastFee} USD)`,
+        label: `Fast (${fastFee} USD)`,
         denom: erc20Token.symbol,
         amount: Big(fastFee).div(tokenPrice).round(6, Big.roundDown).toString(),
         amountInCurrency: fastFee.toString()
       });
       fees.push({
         id: 3,
-        label: `instant (${instantFee} USD)`,
+        label: `Instant (${instantFee} USD)`,
         denom: erc20Token.symbol,
         amount: Big(instantFee).div(tokenPrice).round(6, Big.roundDown).toString(),
         amountInCurrency: instantFee.toString()
@@ -203,18 +203,18 @@ async function getFees (fromChain: SupportedChain, token: IToken, tokenPrice: st
 async function getErc20FeeAmount (token: IToken): Promise<number> {
   try {
     const response = await axios.get('https://info.gravitychain.io:9000/gravity_bridge_info');
-    const pendingBatches = response.data.pending_batches;
+    const pendingBatches = response.data.pending_tx.pending_batches;
     let erc20Fee = 0;
     for (let i = 0; i < pendingBatches.length; i++) {
       const batch = pendingBatches[i];
       for (let j = 0; j < batch.transactions.length; j++) {
         const transaction = batch.transactions[j];
-        if (transaction.erc20_token.contract === token.erc20) {
+        if (transaction.erc20_fee.contract === token.erc20) {
           erc20Fee += transaction.erc20_fee.amount;
         }
       }
     }
-    return erc20Fee;
+    return Number(erc20Fee.toFixed(6));
   } catch (error) {
     throw new Error('An error occurred while retrieving the fee amount');
   }
