@@ -7,7 +7,7 @@ import Row from 'components/Row';
 import Text from 'components/Text';
 import usePrice from 'hooks/use-price';
 import _ from 'lodash';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import transferer from 'services/transfer/transferer';
 import loggerFactory from 'services/util/logger-factory';
 import { BridgeFee, IToken, SupportedChain } from 'types';
@@ -35,10 +35,14 @@ function getPriceDenom (selectedToken: IToken): string {
 }
 
 const FeeSelector: React.FC<FeeSelectorProps> = ({ fromChain, toChain, selectedToken, currency, amount, balance, select, selectedFee }) => {
-  const [fees, setFees] = useState(null);
+  const [fees, setFees] = useState<BridgeFee[]>([]);
   const priceDenom = getPriceDenom(selectedToken);
   const tokenPrice = usePrice(currency, priceDenom);
   const _tokenPrice = new Big(tokenPrice?.current_price || '1').toString();
+
+  function isSameFee (feeA: BridgeFee, feeB: BridgeFee): boolean {
+    return _.join(_.values(feeA), ':') === _.join(_.values(feeB), ':');
+  }
 
   useEffect(() => {
     async function fetchFees (): Promise<void> {
@@ -58,7 +62,7 @@ const FeeSelector: React.FC<FeeSelectorProps> = ({ fromChain, toChain, selectedT
       if (fee && !isSameFee(fee, selectedFee)) {
         select(fee);
       }
-    } else if (fees && fees.length > 0) {
+    } else if (fees && fees !== null) {
       select(fees[0]);
     }
   }, [fromChain, selectedToken, selectedFee, fees]);
@@ -114,11 +118,4 @@ const FeeSelector: React.FC<FeeSelectorProps> = ({ fromChain, toChain, selectedT
   );
 };
 
-function isSameFee (feeA: BridgeFee, feeB: BridgeFee): boolean {
-  return _.join(_.values(feeA), ':') === _.join(_.values(feeB), ':');
-}
-
 export default FeeSelector;
-function useState (_arg0: null): [any, any] {
-  throw new Error('Function not implemented.');
-}

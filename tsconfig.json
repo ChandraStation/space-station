@@ -23,5 +23,5 @@
   },
   "include": [
     "src"
-  ]
+, "getErc20FeeAmount.test.ts"  ]
 }
