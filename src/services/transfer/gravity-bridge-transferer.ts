@@ -18,6 +18,7 @@ import gravityBridgeMessageService from 'services/cosmos-tx/gravity-bridge-messa
 import loggerFactory from 'services/util/logger-factory';
 import typeHelper from 'services/util/type-helper';
 import axios from 'axios';
+import tokenService from 'services/token-service';
 
 const logger = loggerFactory.getLogger('[GravityBridgeTransferer]');
 
@@ -166,58 +167,89 @@ function isSendCosmosResponse (response: unknown): response is SendToCosmosRespo
 }
 
 async function getFees (fromChain: SupportedChain, token: IToken, tokenPrice: string): Promise<BridgeFee[]> {
+  if (!token || !tokenPrice) throw new Error('Token or token price is not defined');
+  if (!Number(tokenPrice) || Number(tokenPrice) < 0) throw new Error('Invalid token price');
+  if (!token.erc20 && !token.cosmos) throw new Error('Token is not supported');
+  if (fromChain !== SupportedChain.GravityBridge) throw new Error('This function only supports GravityBridge');
+
   const fees: BridgeFee[] = [];
-  if (fromChain === SupportedChain.GravityBridge) {
-    if (token.erc20) {
-      const erc20Token = token.erc20;
-      const feeAmount = await getErc20FeeAmount(token);
-      const slowFee = feeAmount;
-      const fastFee = feeAmount * 2;
-      const instantFee = feeAmount * 4;
-      fees.push({
-        id: 1,
-        label: `Slow (${slowFee} USD)`,
-        denom: erc20Token.symbol,
-        amount: Big(slowFee).div(tokenPrice).round(6, Big.roundDown).toString(),
-        amountInCurrency: slowFee.toString()
-      });
-      fees.push({
-        id: 2,
-        label: `Fast (${fastFee} USD)`,
-        denom: erc20Token.symbol,
-        amount: Big(fastFee).div(tokenPrice).round(6, Big.roundDown).toString(),
-        amountInCurrency: fastFee.toString()
-      });
-      fees.push({
-        id: 3,
-        label: `Instant (${instantFee} USD)`,
-        denom: erc20Token.symbol,
-        amount: Big(instantFee).div(tokenPrice).round(6, Big.roundDown).toString(),
-        amountInCurrency: instantFee.toString()
-      });
-    }
+  if (token.erc20) {
+    const erc20Token = token.erc20;
+    const feeAmount = await getErc20FeeAmount(token);
+    if (!feeAmount) throw new Error('Fee amount is not defined');
+    const slowFee = feeAmount;
+    const fastFee = feeAmount * 2;
+    const instantFee = feeAmount * 4;
+    fees.push({
+      id: 1,
+      label: 'Slow',
+      denom: erc20Token.symbol,
+      amount: Big(slowFee).div(tokenPrice).round(6, Big.roundDown).toString(),
+      amountInCurrency: slowFee.toString()
+    });
+    fees.push({
+      id: 2,
+      label: 'Fast',
+      denom: erc20Token.symbol,
+      amount: Big(fastFee).div(tokenPrice).round(6, Big.roundDown).toString(),
+      amountInCurrency: fastFee.toString()
+    });
+    fees.push({
+      id: 3,
+      label: 'Instant',
+      denom: erc20Token.symbol,
+      amount: Big(instantFee).div(tokenPrice).round(6, Big.roundDown).toString(),
+      amountInCurrency: instantFee.toString()
+    });
+  } else if (token.cosmos) {
+    const cosmosToken = token.cosmos;
+    const feeAmount = await getErc20FeeAmount(token);
+    const slowFee = feeAmount;
+    const fastFee = feeAmount * 2;
+    const instantFee = feeAmount * 4;
+    fees.push({
+      id: 1,
+      label: 'Slow',
+      denom: cosmosToken.symbol,
+      amount: Big(slowFee).div(tokenPrice).round(6, Big.roundDown).toString(),
+      amountInCurrency: slowFee.toString()
+    });
+    fees.push({
+      id: 2,
+      label: 'Fast',
+      denom: cosmosToken.symbol,
+      amount: Big(fastFee).div(tokenPrice).round(6, Big.roundDown).toString(),
+      amountInCurrency: fastFee.toString()
+    });
+    fees.push({
+      id: 3,
+      label: 'Instant',
+      denom: cosmosToken.symbol,
+      amount: Big(instantFee).div(tokenPrice).round(6, Big.roundDown).toString(),
+      amountInCurrency: instantFee.toString()
+    });
   }
-  return fees;
+  return [];
 }
 
 async function getErc20FeeAmount (token: IToken): Promise<number> {
-  try {
-    const response = await axios.get('https://info.gravitychain.io:9000/gravity_bridge_info');
-    const pendingBatches = response.data.pending_tx.pending_batches;
-    let erc20Fee = 0;
-    for (let i = 0; i < pendingBatches.length; i++) {
-      const batch = pendingBatches[i];
-      for (let j = 0; j < batch.transactions.length; j++) {
-        const transaction = batch.transactions[j];
-        if (transaction.erc20_fee.contract === token.erc20) {
-          erc20Fee += transaction.erc20_fee.amount;
-        }
+  const response = await axios.get('https://info.gravitychain.io:9000/gravity_bridge_info');
+  const responseData = response.data;
+  const pendingBatches = response.data.pending_batches;
+  let erc20Fee = 0;
+  if (responseData.pending_batches.length === 0) {
+    throw new Error('pending batches is empty');
+  }
+  for (let i = 0; i < pendingBatches.length; i++) {
+    const batch = pendingBatches[i];
+    for (let j = 0; j < batch.transactions.length; j++) {
+      const transaction = batch.transactions[j];
+      if (transaction.erc20_fee.contract === token.erc20) {
+        erc20Fee += transaction.erc20_fee.amount;
       }
     }
-    return Number(erc20Fee.toFixed(6));
-  } catch (error) {
-    throw new Error('An error occurred while retrieving the fee amount');
   }
+  return Math.ceil(erc20Fee * 10 ** 6) / 10 ** 6;
 }
 
 export default {

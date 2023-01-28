@@ -36,6 +36,7 @@ function getPriceDenom (selectedToken: IToken): string {
 
 const FeeSelector: React.FC<FeeSelectorProps> = ({ fromChain, toChain, selectedToken, currency, amount, balance, select, selectedFee }) => {
   const [fees, setFees] = useState<BridgeFee[]>([]);
+  const [error, setError] = useState(null);
   const priceDenom = getPriceDenom(selectedToken);
   const tokenPrice = usePrice(currency, priceDenom);
   const _tokenPrice = new Big(tokenPrice?.current_price || '1').toString();
@@ -49,6 +50,7 @@ const FeeSelector: React.FC<FeeSelectorProps> = ({ fromChain, toChain, selectedT
       try {
         const feesData = await transferer.getFees(fromChain, toChain, selectedToken, _tokenPrice);
         setFees(feesData);
+        setError(null);
       } catch (error) {
         logger.error(error);
       }
@@ -72,6 +74,9 @@ const FeeSelector: React.FC<FeeSelectorProps> = ({ fromChain, toChain, selectedT
     select(fee);
   }, [select]);
 
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
   if (!fees) return null;
 
   const disableds = fees.map((fee: any) => {
