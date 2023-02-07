@@ -242,7 +242,7 @@ async function broadcast (
       logger.error('[broadcast]', rawLog);
       throw new Error(rawLog);
     }
-    return txhash;
+    return code;
   } else if (broadCastSource === BroadcastSource.Wallet) {
     const chainInfo = cosmosChains[chain];
     const chainId = chainInfo.chainId;
@@ -315,7 +315,7 @@ async function getAccountInfo (chain: SupportedCosmosChain, address: string): Pr
     _.get(accountInfo, 'base_account.sequence') ||
     _.get(accountInfo, 'sequence');
 
-    return [accountNumber, sequence];
+    return [accountNumber, new Long(+sequence)];
   } catch (error) {
     logger.error('[getAccountInfo]', error);
     return ['', new Long(0)];

@@ -1,7 +1,6 @@
 {
   "name": "gravity-bridge-dapp",
   "version": "0.0.1",
-  "homepage": "https://chandrastation.github.io/space-station/",
   "private": true,
   "dependencies": {
     "@cosmjs/launchpad": "^0.26.5",
@@ -12,10 +11,12 @@
     "@emotion/styled": "^11.6.0",
     "@headlessui/react": "^1.4.2",
     "@keplr-wallet/types": "^0.9.6",
+    "@ledgerhq/devices": "6.27.1",
     "@ledgerhq/hw-app-eth": "^6.26.1",
-    "@ledgerhq/hw-transport": "^6.24.1",
-    "@ledgerhq/hw-transport-webhid": "^6.24.1",
-    "@ledgerhq/hw-transport-webusb": "^6.24.1",
+    "@ledgerhq/hw-transport": "6.27.1",
+    "@ledgerhq/hw-transport-node-hid": "^6.27.1",
+    "@ledgerhq/hw-transport-webhid": "^6.27.1",
+    "@ledgerhq/hw-transport-webusb": "6.27.1",
     "@metamask/detect-provider": "^1.2.0",
     "@metamask/providers": "^8.1.1",
     "@mui/material": "^5.2.4",
