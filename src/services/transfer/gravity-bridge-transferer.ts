@@ -168,7 +168,7 @@ function isSendCosmosResponse (response: unknown): response is SendToCosmosRespo
 
 async function getGasPrices (): Promise<{ slow: number; fast: number; instant: number }> {
   try {
-    const baseUrl = process.env.REACT_APP_API_BASE_URL || '';
+    const baseUrl = 'https://api.chandrastation.com';
     const response = await axios.get(`${baseUrl}/api/gas-prices`);
     const { slow, fast, instant } = response.data;
     return {
