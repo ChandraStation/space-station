@@ -22,6 +22,9 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
+    "@types/cors": "^2.8.13",
+    "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.17",
     "@types/jest": "^26.0.15",
     "@types/node": "^12.0.0",
     "@types/react": "^17.0.0",
@@ -31,7 +34,6 @@
     "axios": "^0.24.0",
     "big.js": "^6.1.1",
     "classnames": "^2.3.1",
-    "dotenv": "^10.0.0",
     "ethers": "^5.5.1",
     "ledger-cosmos-js": "^2.1.8",
     "lodash": "^4.17.21",
@@ -46,6 +48,7 @@
     "rxjs": "^7.4.0",
     "secp256k1": "^4.0.3",
     "ts-interface-checker": "^1.0.2",
+    "ts-node": "^10.9.1",
     "typescript": "^4.5.4",
     "web-vitals": "^1.0.1",
     "web3": "^1.6.1",
@@ -54,7 +57,8 @@
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "start": "react-scripts --openssl-legacy-provider start",
+    "start:server": "TS_NODE_PROJECT=tsconfig.server.json ts-node-dev --respawn --transpile-only server.ts",
+    "start": "REACT_APP_GA=G-VEG6QT20YL react-scripts start",
     "build": "REACT_APP_GA=G-VEG6QT20YL react-scripts build",
     "test": "react-scripts test --passWithNoTests",
     "eject": "react-scripts eject",
@@ -79,6 +83,7 @@
       "last 1 safari version"
     ]
   },
+  "proxy": "http://0.0.0.0:4000",
   "devDependencies": {
     "@types/big.js": "^6.1.2",
     "@types/lodash": "^4.14.177",
@@ -92,6 +97,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.1",
     "eslint-plugin-react": "^7.27.1",
-    "ts-interface-builder": "^0.3.3"
+    "ts-interface-builder": "^0.3.3",
+    "ts-node-dev": "^2.0.0"
   }
 }
