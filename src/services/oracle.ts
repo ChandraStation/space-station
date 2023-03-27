@@ -5,6 +5,21 @@ type FetchTokenPriceDataResponse = {
   price: number;
 };
 
+type SymbolToCoinIdMap = {
+  [key: string]: string;
+};
+
+const symbolToCoinIdMap: SymbolToCoinIdMap = {
+  CANTO: 'canto',
+  EVMOS: 'evmos',
+  ATOM: 'cosmos',
+  STARS: 'stargaze',
+  CHEQ: 'cheqd-network',
+  HUAHUA: 'chihuahua-token',
+  NYM: 'nym',
+  FUND: 'unification'
+};
+
 export const fetchTokenPriceData = async (token: IToken): Promise<FetchTokenPriceDataResponse> => {
   let symbol: string | undefined;
 
@@ -16,23 +31,40 @@ export const fetchTokenPriceData = async (token: IToken): Promise<FetchTokenPric
     throw new Error('Token does not have a valid symbol');
   }
 
-  const response = await axios.get('https://info.gravitychain.io:9000/erc20_metadata');
-  const data = response.data;
+  const supportedByGravityChain = ['DAI', 'USDT', 'USDC', 'WBTC', 'WETH'].includes(symbol);
 
-  let tokenData: any;
+  if (supportedByGravityChain) {
+    const response = await axios.get('https://info.gravitychain.io:9000/erc20_metadata');
+    const data = response.data;
 
-  if (symbol === 'USDC') {
-    const usdcData = data.filter((item: any) => item.symbol === 'USDC');
-    tokenData = usdcData[1]; // Choose the second item in the filtered array for USDC
+    let tokenData: any;
+
+    if (symbol === 'USDC') {
+      const usdcData = data.filter((item: any) => item.symbol === 'USDC');
+      tokenData = usdcData[1]; // Choose the second item in the filtered array for USDC
+    } else {
+      tokenData = data.find((item: any) => item.symbol === symbol);
+    }
+
+    if (!tokenData) {
+      throw new Error(`Token with symbol ${symbol} not found in the response`);
+    }
+
+    return {
+      price: tokenData.exchange_rate / 1e6 // Convert to USD
+    };
   } else {
-    tokenData = data.find((item: any) => item.symbol === symbol);
-  }
+    const coinId = symbolToCoinIdMap[symbol];
 
-  if (!tokenData) {
-    throw new Error(`Token with symbol ${symbol} not found in the response`);
-  }
+    if (!coinId) {
+      throw new Error(`Token with symbol ${symbol} not found in the symbolToCoinIdMap`);
+    }
 
-  return {
-    price: tokenData.exchange_rate / 1e6 // Convert to USD
-  };
+    const response = await axios.get(`https://api.coingecko.com/api/v3/coins/${coinId}`);
+    const data = response.data;
+
+    return {
+      price: data.market_data.current_price.usd
+    };
+  }
 };
