@@ -12,7 +12,7 @@ const Footer: React.FC = () => {
   return (
     <div className="footer">
       {ON_AKASH && (<span className="deployed-on-akash"><AkashLogo/>&nbsp;&nbsp;Deployed on Akash.&nbsp;</span>)}
-      <span className="copyright">© 2022 powered by Chandra Station.</span>
+      <div className="copyright">© 2023 powered by Chandra Station.</div>
     </div>
   );
 };

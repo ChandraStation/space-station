@@ -34,7 +34,7 @@ const App: React.FC = () => {
       <div className="container">
         <TransferBox theme={theme}/>
         <p className="mobile-guide-container">
-          spacestation.zone is currently optimized<br/>
+          This application is currently optimized<br/>
           for web view only - please access<br/>
           through a <span className="mobile-guide-accent">desktop/laptop.</span><br/>
         </p>

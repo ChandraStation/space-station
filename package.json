@@ -61,9 +61,7 @@
     "start": "REACT_APP_GA=G-VEG6QT20YL react-scripts start",
     "build": "REACT_APP_GA=G-VEG6QT20YL react-scripts build",
     "test": "react-scripts test --passWithNoTests",
-    "eject": "react-scripts eject",
-    "deploy:testnet": "yarn run build && aws s3 sync --cache-control max-age=0,public ./build/ s3://gb-eth",
-    "deploy:prod": "REACT_APP_GA=G-VEG6QT20YL yarn run build && aws s3 sync --cache-control max-age=0,public ./build/ s3://spacestation.zone && aws cloudfront create-invalidation --distribution-id ESRVODSMBBH8C --paths '/*'"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
