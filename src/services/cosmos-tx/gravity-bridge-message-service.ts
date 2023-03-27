@@ -89,19 +89,21 @@ function convertTokenToCoin (token: IToken, amount: string): cosmos.base.v1beta1
 }
 
 function convertTokenTofee (token: IToken, amount: string, scaleFactor: number): cosmos.base.v1beta1.ICoin {
+  const chainFeeAmount = new Big(amount).times(scaleFactor).toFixed(0);
+
   if (token.erc20) {
     return {
       denom: `gravity${token.erc20.address}`,
-      amount
+      amount: chainFeeAmount
     };
   } else if (token.cosmos) {
     return {
       denom: token.cosmos.denom,
-      amount
+      amount: chainFeeAmount
     };
   } else {
     const errorMessage = 'No token info!';
-    logger.error('[convertTokenToCoin]', errorMessage);
+    logger.error('[convertTokenTofee]', errorMessage);
     throw new Error(errorMessage);
   }
 }
