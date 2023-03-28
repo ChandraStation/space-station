@@ -1,8 +1,20 @@
 # Space Station
+### Branches
+**THIS IS THE PRODUCTION BRANCH. THIS BRANCH WILL NOT WORK FOR YOUR DEPLOYMENTS WITHOUT CUSTIMIZATION. PLEASE USE THE MAIN BRANCH**
 
 ## Overview
-Web application for interchain bridges
-https://spacestation.zone/
+Web application for bridging assets to & from Ethereum & Gravity Bridge. This is a fork of Space Station by Cosmostation, now maintained, managed and updated by Chanddra Station (so many stations). 
+
+## Deploy your own
+One of the main focuses of our fork is to allow any end user to fork the application and launch it locally so anyone can bridge assets easily regardless of if Chandra Stations front end is up.
+
+*1 Fork the repo
+*2 Enable Github Pages on your fork
+*3 Update the `package.json` file with your homepage address. It will be `https://<your_github_username>.gitthub.io/space-station`
+*4 Once you create a pull request and merge it the application will build and deploy itself to the endpoint above
+
+### Rate Limiting
+Your deployment will be heavily rate limited. We are pulling gas estimates from Ether Scan and token prices from either CoinGecko or Coin Maraket Cap in addition to the gravity chain api. The deployment managed by Chandra Station is less rate limited.
 
 ## Gravity Bridge
 ### Contract Info
@@ -19,4 +31,4 @@ https://spacestation.zone/
 * Nyx NYM: https://etherscan.io/tx/0xa0ad4a72d9a28a8eb6269d2676431bf1ed0944ad5cd0e4b941ab4da91cb663c5
 
 ## Add New Chain
-Please refer this [PR](https://github.com/cosmostation/space-station/pull/12)
+Please refer to this [PR](https://github.com/cosmostation/space-station/pull/12)

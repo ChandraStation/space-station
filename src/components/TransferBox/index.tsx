@@ -1,4 +1,5 @@
 import './TransferBox.css';
+import '../../fonts.css';
 
 import Big from 'big.js';
 import classNames from 'classnames';

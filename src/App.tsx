@@ -14,6 +14,7 @@ import dotenv from 'dotenv';
 import ethWalletManager from 'services/eth-wallet/eth-wallet-manager';
 import { initGA } from 'services/ga';
 import useTheme from 'hooks/use-theme';
+import 'fonts.css';
 
 dotenv.config();
 

@@ -58,7 +58,7 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "start:server": "TS_NODE_PROJECT=tsconfig.server.json ts-node-dev --respawn --transpile-only server.ts",
-    "start": "REACT_APP_GA=G-VEG6QT20YL react-scripts start",
+    "start": "set REACT_APP_GA=G-VEG6QT20YL && set NODE_OPTIONS=--openssl-legacy-provider && react-scripts start",
     "build": "REACT_APP_GA=G-VEG6QT20YL react-scripts build",
     "test": "react-scripts test --passWithNoTests",
     "eject": "react-scripts eject"

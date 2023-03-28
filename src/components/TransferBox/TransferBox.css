@@ -1,3 +1,5 @@
+@import '../../fonts.css';
+
 .App.dark {
   --token-selector-background-color: var(--base-07);
   --token-selector-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
@@ -16,6 +18,7 @@
 
 .transfer-box-heading {
   margin-bottom: 20px;
+  font-family: 'Futura MD BT';
 }
 
 .theme-change-button {
