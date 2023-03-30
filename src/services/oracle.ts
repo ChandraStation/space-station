@@ -12,10 +12,10 @@ type SymbolToCoinIdMap = {
 const symbolToCoinIdMap: SymbolToCoinIdMap = {
   CANTO: 'canto',
   EVMOS: 'evmos',
-  ATOM: 'cosmos',
-  STARS: 'stargaze',
-  CHEQ: 'cheqd-network',
-  HUAHUA: 'chihuahua-token',
+  ATOM: 'atom',
+  STARS: 'stars',
+  CHEQ: 'cheq',
+  HUAHUA: 'huahua',
   NYM: 'nym',
   FUND: 'unification'
 };
@@ -60,11 +60,11 @@ export const fetchTokenPriceData = async (token: IToken): Promise<FetchTokenPric
       throw new Error(`Token with symbol ${symbol} not found in the symbolToCoinIdMap`);
     }
 
-    const response = await axios.get(`https://api.coingecko.com/api/v3/coins/${coinId}`);
+    const response = await axios.get(`https://api-osmosis.imperator.co/tokens/v2/price/${coinId}`);
     const data = response.data;
 
     return {
-      price: data.market_data.current_price.usd
+      price: data.price
     };
   }
 };

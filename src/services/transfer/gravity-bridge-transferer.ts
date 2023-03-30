@@ -204,9 +204,13 @@ async function getWETHPrice (): Promise<{ price: number }> {
 async function getFees (fromChain: SupportedChain, token: IToken): Promise<BridgeFee[]> {
   if (fromChain === SupportedChain.GravityBridge) {
     try {
+      const slowLimit = 50000;
+      const fourHrLimit = 400000;
+      const instantLimit = 750000;
       const gasPrices = await getGasPrices();
       const feeLevels = [gasPrices.slow, gasPrices.fast, gasPrices.instant];
       const speedLabels: ('slow' | 'fast' | 'instant')[] = ['slow', 'fast', 'instant'];
+      const gasLimits = [slowLimit, fourHrLimit, instantLimit];
 
       const tokenPriceData = await fetchTokenPriceData(token);
       const tokenPrice = tokenPriceData.price;
@@ -217,7 +221,8 @@ async function getFees (fromChain: SupportedChain, token: IToken): Promise<Bridg
       if (token.erc20) {
         const erc20Token = token.erc20;
         return feeLevels.map((gasPrice, i) => {
-          const usdFee = parseFloat((gasPrice * 585000 / 1e9 * ethPrice).toFixed(4));
+          const gasLimit = gasLimits[i];
+          const usdFee = parseFloat((gasPrice * gasLimit / 1e9 * ethPrice).toFixed(4));
           if (isNaN(usdFee) || isNaN(tokenPrice)) {
             throw new Error('Invalid usdFee or tokenPrice');
           }
@@ -233,7 +238,8 @@ async function getFees (fromChain: SupportedChain, token: IToken): Promise<Bridg
       } else if (token.cosmos) {
         const cosmosToken = token.cosmos;
         return feeLevels.map((gasPrice, i) => {
-          const usdFee = parseFloat((gasPrice * 585000 / 1e9 * ethPrice).toFixed(4));
+          const gasLimit = gasLimits[i];
+          const usdFee = parseFloat((gasPrice * gasLimit / 1e9 * ethPrice).toFixed(4));
           if (isNaN(usdFee) || isNaN(tokenPrice)) {
             throw new Error('Invalid usdFee or tokenPrice');
           }
