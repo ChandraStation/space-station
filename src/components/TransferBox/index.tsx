@@ -58,9 +58,12 @@ const TransferBox: React.FC<TransferBoxProps> = ({ theme }) => {
   const hasAmount: boolean = Big(amount || '0').gt('0');
   const tokenSelected: boolean = selectedToken !== undefined;
   const hasTokenBalance: boolean = Big(tokenBalance || '0').round(ROUND, Big.roundDown).gt('0');
+  const chainFeeRate = 0.0002;
+  const chainFee = Big(amount || '0').times(chainFeeRate);
+
   const isEnough: boolean = needBridgeFee
-    ? Big(tokenBalance || '0').gte(Big(amount || '0').add(bridgeFee?.amount || '0'))
-    : Big(tokenBalance || '0').gte(Big(amount || '0'));
+    ? Big(tokenBalance || '0').gte(Big(amount || '0').add(bridgeFee?.amount || '0').add(chainFee))
+    : Big(tokenBalance || '0').gte(Big(amount || '0').add(chainFee));
   const selectedTokenIcon: string = selectedToken !== undefined
     ? selectedToken.erc20?.logoURI || selectedToken.cosmos?.logoURI || defaultTokenIcon
     : defaultTokenIcon;
@@ -96,7 +99,8 @@ const TransferBox: React.FC<TransferBoxProps> = ({ theme }) => {
   const onClickMax = useCallback(() => {
     const _tokenBalance = Big(tokenBalance).round(ROUND, Big.roundDown);
     if (needBridgeFee && bridgeFee) {
-      const _amount = _tokenBalance.sub(bridgeFee.amount).round(ROUND, Big.roundDown);
+      const chainFee = _tokenBalance.times(0.0002).round(ROUND, Big.roundDown);
+      const _amount = _tokenBalance.sub(chainFee).sub(bridgeFee.amount).round(ROUND, Big.roundDown);
       _amount.gte(0)
         ? setAmount(_amount.toString())
         : setAmount('0');
