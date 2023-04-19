@@ -4,6 +4,7 @@ import NymLogo from 'images/nym-icon.png';
 import EvmosLogo from 'images/evmos-logo.png';
 import CantoLogo from 'images/canto-logo.png';
 import UnificationLogo from 'images/unification-logo.png';
+import WstETHLogo from 'images/wsteth-logo.png';
 
 export default {
   gravity0x6B175474E89094C44Da98b954EedeAC495271d0F: {
@@ -50,6 +51,15 @@ export default {
     decimals: 8,
     logoURI: 'https://assets.coingecko.com/coins/images/7598/thumb/wrapped_bitcoin_wbtc.png?1548822744',
     priceDenom: 'wrapped-bitcoin'
+  },
+  gravity0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0: {
+    name: 'Wrapped liquid staked Ether 2.0',
+    denom: 'gravity0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0',
+    symbol: 'wstETH',
+    coinId: 'wsteth',
+    decimals: 18,
+    logoURI: WstETHLogo,
+    priceDenom: 'wsteth'
   },
   'ibc/2E5D0AC026AC1AFA65A23023BA4F24BB8DDF94F118EDC0BAD6F625BFC557CDED': {
     name: 'Atom',

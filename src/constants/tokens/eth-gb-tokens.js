@@ -3,6 +3,7 @@ import ChihuahuaChainLogo from 'images/chihuahua-chain-logo.png';
 import NymLogo from 'images/nym-icon.png';
 import EvmosLogo from 'images/evmos-logo.png';
 import UnificationLogo from 'images/unification-logo.png';
+import WstETHLogo from 'images/wsteth-logo.png';
 
 export default [
   {
@@ -49,6 +50,15 @@ export default [
     decimals: 8,
     logoURI: 'https://assets.coingecko.com/coins/images/7598/thumb/wrapped_bitcoin_wbtc.png?1548822744',
     priceDenom: 'wrapped-bitcoin'
+  },
+  {
+    chainId: '0x1',
+    address: '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0',
+    name: 'Wrapped liquid staked Ether 2.0',
+    symbol: 'wstETH',
+    decimals: 18,
+    logoURI: WstETHLogo,
+    priceDenom: 'wsteth'
   },
   {
     chainId: '0x1',

@@ -20,7 +20,7 @@ const Header: React.FC<HeaderProps> = ({ theme }) => {
           }
         </>
         <div className="logo-title-container">
-          Now supporting&nbsp;<span className="logo-title-gravity-bridge">Gravity Bridge Chain Fees</span>&nbsp;and&nbsp;<span className="logo-title-gravity-bridge">Canto Transfers</span>
+          Now supporting&nbsp;<span className="logo-title-gravity-bridge">Gravity Bridge Chain Fees</span>&nbsp;and&nbsp;<span className="logo-title-gravity-bridge">wstETH Transfers</span>
         </div>
       </div>
     </div>

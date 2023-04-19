@@ -42,7 +42,7 @@ const cosmos: CosmosChainInfo = {
 const osmosis: CosmosChainInfo = {
   chainName: 'Osmosis',
   chainId: 'osmosis-1',
-  lcd: 'https://lcd-osmosis-app-and.cosmostation.io',
+  lcd: 'https://osmosis.api.chandrastation.com',
   bech32Prefix: 'osmo',
   path: [44, 118, 0, 0, 0],
   denom: 'uosmo',

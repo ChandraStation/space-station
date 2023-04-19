@@ -17,7 +17,8 @@ const symbolToCoinIdMap: SymbolToCoinIdMap = {
   CHEQ: 'cheq',
   HUAHUA: 'huahua',
   NYM: 'nym',
-  FUND: 'unification'
+  FUND: 'unification',
+  OSMO: 'osmosis'
 };
 
 export const fetchTokenPriceData = async (token: IToken): Promise<FetchTokenPriceDataResponse> => {
@@ -31,7 +32,7 @@ export const fetchTokenPriceData = async (token: IToken): Promise<FetchTokenPric
     throw new Error('Token does not have a valid symbol');
   }
 
-  const supportedByGravityChain = ['DAI', 'USDT', 'USDC', 'WBTC', 'WETH'].includes(symbol);
+  const supportedByGravityChain = ['DAI', 'USDT', 'USDC', 'WBTC', 'WETH', 'wstETH'].includes(symbol);
 
   if (supportedByGravityChain) {
     const response = await axios.get('https://info.gravitychain.io:9000/erc20_metadata');
