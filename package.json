@@ -1,7 +1,7 @@
 {
   "name": "gravity-bridge-dapp",
   "version": "0.0.1",
-  "homepage": "https://chandrastation.github.io/space-station/",
+  "homepage": "https://bridge.gravitypulse.app",
   "private": true,
   "dependencies": {
     "@cosmjs/launchpad": "^0.26.5",
