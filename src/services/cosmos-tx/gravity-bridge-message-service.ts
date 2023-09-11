@@ -20,7 +20,7 @@ function createSendToEthereumMessage (transfer: ITransfer): google.protobuf.Any 
   const feeAmount = transfer.bridgeFee
     ? new Big(transfer.bridgeFee.amount).times(decimal).toString()
     : '0';
-  const chainFeeAmount = convertTokenTofee(transfer.token, amount, 0.0002);
+  const chainFeeAmount = convertTokenTofee(transfer.token, amount, 0.0004);
   const coin = convertTokenToCoin(transfer.token, amount);
   const feeCoin = convertTokenToCoin(transfer.token, feeAmount);
   const sendMessage = new gravity.v1.MsgSendToEth({
@@ -52,7 +52,7 @@ function createSendToEthereumAminoMessage (transfer: ITransfer): AminoMsg {
     ? new Big(transfer.bridgeFee.amount).times(decimal).toString()
     : '0';
   /** Takes 2% of the amount being bridged to derive the chain Fee */
-  const chainFeeAmount = convertTokenTofee(transfer.token, amount, 0.0002);
+  const chainFeeAmount = convertTokenTofee(transfer.token, amount, 0.0004);
   const coin = convertTokenToCoin(transfer.token, amount);
   const feeCoin = convertTokenToCoin(transfer.token, feeAmount);
   const message: AminoMsg = {
