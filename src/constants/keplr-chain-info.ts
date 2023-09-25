@@ -3,8 +3,8 @@ import { ChainInfo } from '@keplr-wallet/types';
 const gravityBridge: ChainInfo = {
   chainName: 'GravityBridge',
   chainId: 'gravity-bridge-3',
-  rest: 'https://gravity.api.chandrastation.com',
-  rpc: 'https://gravity.rpc.chandrastation.com:443',
+  rest: 'https://nodes.chandrastation.com/api/gravity/',
+  rpc: 'https://nodes.chandrastation.com/rpc/gravity/',
   stakeCurrency: {
     coinDenom: 'GRAVITON',
     coinMinimalDenom: 'ugraviton',
