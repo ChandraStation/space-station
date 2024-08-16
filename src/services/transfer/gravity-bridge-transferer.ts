@@ -214,9 +214,6 @@ async function getFees (fromChain: SupportedChain, token: IToken): Promise<Bridg
 
       const tokenPriceData = await fetchTokenPriceData(token);
       const tokenPrice = tokenPriceData.price;
-      const wstethPrice = tokenPrice;
-      // eslint-disable-next-line
-      console.log(wstethPrice);
 
       const wethPriceData = await getWETHPrice();
       const ethPrice = wethPriceData.price;

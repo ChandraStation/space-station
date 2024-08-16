@@ -87,3 +87,8 @@ html {
     display: block;
   }
 }
+
+.token-selector-max-button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

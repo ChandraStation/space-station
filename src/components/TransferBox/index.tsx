@@ -58,13 +58,69 @@ const TransferBox: React.FC<TransferBoxProps> = ({ theme }) => {
   const hasAmount: boolean = Big(amount || '0').gt('0');
   const tokenSelected: boolean = selectedToken !== undefined;
   const hasTokenBalance: boolean = Big(tokenBalance || '0').round(ROUND, Big.roundDown).gt('0');
+  const [chainFeeRate, setChainFeeRate] = useState<Big>(Big(0));
+  const [isLoadingFeeRate, setIsLoadingFeeRate] = useState<boolean>(true);
 
-  const chainFeeRate = 0.0003;
-  const chainFee = Big(amount || '0').times(chainFeeRate);
+  const fetchChainFeeRate = async (): Promise<Big> => {
+    try {
+      const response = await fetch('https://gravitychain.io:1317/gravity/v1beta/params');
+      const data = await response.json();
+      const minChainFeeBasisPoints = data.params.min_chain_fee_basis_points;
+
+      return Big(minChainFeeBasisPoints).div(10000);
+    } catch (error) {
+      toastService.showTxFailToast(selectedToken ?? {} as IToken, amount, toChain, _.get(error, 'message'));
+      throw error;
+    }
+  };
+
+  useEffect(() => {
+    const fetchFeeRate = async (): Promise<Big> => {
+      setIsLoadingFeeRate(true);
+      try {
+        const fee = await fetchChainFeeRate();
+        setChainFeeRate(fee);
+        return fee;
+      } catch (error) {
+        toastService.showTxFailToast(selectedToken ?? {} as IToken, amount, toChain, _.get(error, 'message'));
+        setChainFeeRate(Big(0.0003));
+        return Big(0.0003);
+      } finally {
+        setIsLoadingFeeRate(false);
+      }
+    };
+
+    fetchFeeRate();
+  }, []);
+
+  const calculateChainFee = useCallback((amount: string): Big => {
+    return Big(amount || '0').times(chainFeeRate).round(18, Big.roundUp);
+  }, [chainFeeRate]);
+
+  const onClickMax = useCallback(() => {
+    if (isLoadingFeeRate) return;
+    const _tokenBalance = Big(tokenBalance).round(ROUND, Big.roundDown);
+    if (needBridgeFee && bridgeFee) {
+      const maxAmount = _tokenBalance.sub(bridgeFee.amount);
+      const calculatedChainFee = calculateChainFee(maxAmount.toString());
+      const _amount = maxAmount.sub(calculatedChainFee).round(ROUND, Big.roundDown);
+      _amount.gte(0)
+        ? setAmount(_amount.toString())
+        : setAmount('0');
+    } else {
+      const maxAmount = _tokenBalance;
+      const calculatedChainFee = calculateChainFee(maxAmount.toString());
+      const _amount = maxAmount.sub(calculatedChainFee).round(ROUND, Big.roundDown);
+      setAmount(_amount.toString());
+    }
+  }, [needBridgeFee, bridgeFee, tokenBalance, calculateChainFee, isLoadingFeeRate]);
+
+  const chainFee = calculateChainFee(amount);
 
   const isEnough: boolean = needBridgeFee
     ? Big(tokenBalance || '0').gte(Big(amount || '0').add(bridgeFee?.amount || '0').add(chainFee))
     : Big(tokenBalance || '0').gte(Big(amount || '0').add(chainFee));
+
   const selectedTokenIcon: string = selectedToken !== undefined
     ? selectedToken.erc20?.logoURI || selectedToken.cosmos?.logoURI || defaultTokenIcon
     : defaultTokenIcon;
@@ -96,19 +152,6 @@ const TransferBox: React.FC<TransferBoxProps> = ({ theme }) => {
     setSelectedToken(undefined);
     setAmount('0');
   }, []);
-
-  const onClickMax = useCallback(() => {
-    const _tokenBalance = Big(tokenBalance).round(ROUND, Big.roundDown);
-    if (needBridgeFee && bridgeFee) {
-      const chainFee = _tokenBalance.times(0.0003).round(ROUND, Big.roundDown);
-      const _amount = _tokenBalance.sub(chainFee).sub(bridgeFee.amount).round(ROUND, Big.roundDown);
-      _amount.gte(0)
-        ? setAmount(_amount.toString())
-        : setAmount('0');
-    } else {
-      setAmount(_tokenBalance.toString());
-    }
-  }, [needBridgeFee, bridgeFee, amount, tokenBalance]);
 
   const onUpdateAmount = useCallback((event) => {
     const amount = _.get(event, 'target.value', '');
@@ -161,6 +204,13 @@ const TransferBox: React.FC<TransferBoxProps> = ({ theme }) => {
         toAddress: toAccount.address,
         token: selectedToken,
         amount,
+        chainFee: {
+          id: 0,
+          label: selectedToken.erc20?.symbol || selectedToken.cosmos?.symbol || '',
+          amount: chainFee.toString(),
+          amountInCurrency: '0',
+          denom: selectedToken.erc20?.symbol || selectedToken.cosmos?.symbol || ''
+        },
         bridgeFee
       };
       transferer.transfer(transfer)
@@ -214,13 +264,18 @@ const TransferBox: React.FC<TransferBoxProps> = ({ theme }) => {
                 <ArrowNoTailIcon/>
               </IconButton>
             </div>
-            {selectedToken !== undefined
-              ? (
-              <div className="token-selector-max-button" onClick={onClickMax}>
+            <>
+            {selectedToken !== undefined && (
+              <div
+                className={classNames('token-selector-max-button', {
+                  disabled: isLoadingFeeRate || !hasTokenBalance
+                })}
+                onClick={isLoadingFeeRate || !hasTokenBalance ? undefined : onClickMax}
+              >
                 <Text size="tiny">Max</Text>
               </div>
-                )
-              : (<></>)}
+            )}
+            </>
             <input
               className="token-selector-token-amount-input"
               value={amount}

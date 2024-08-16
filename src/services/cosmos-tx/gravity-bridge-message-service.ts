@@ -20,7 +20,8 @@ function createSendToEthereumMessage (transfer: ITransfer): google.protobuf.Any 
   const feeAmount = transfer.bridgeFee
     ? new Big(transfer.bridgeFee.amount).times(decimal).toString()
     : '0';
-  const chainFeeAmount = convertTokenTofee(transfer.token, amount, 0.0001);
+  const chainFeeAmount = convertTokenTofee(transfer.token, transfer.chainFee?.amount ?? '');
+
   const coin = convertTokenToCoin(transfer.token, amount);
   const feeCoin = convertTokenToCoin(transfer.token, feeAmount);
   const sendMessage = new gravity.v1.MsgSendToEth({
@@ -51,8 +52,9 @@ function createSendToEthereumAminoMessage (transfer: ITransfer): AminoMsg {
   const feeAmount = transfer.bridgeFee
     ? new Big(transfer.bridgeFee.amount).times(decimal).toString()
     : '0';
-  /** Takes 2% of the amount being bridged to derive the chain Fee */
-  const chainFeeAmount = convertTokenTofee(transfer.token, amount, 0.0001);
+
+  const chainFeeAmount = convertTokenTofee(transfer.token, transfer.chainFee?.amount ?? '');
+
   const coin = convertTokenToCoin(transfer.token, amount);
   const feeCoin = convertTokenToCoin(transfer.token, feeAmount);
   const message: AminoMsg = {
@@ -88,18 +90,20 @@ function convertTokenToCoin (token: IToken, amount: string): cosmos.base.v1beta1
   }
 }
 
-function convertTokenTofee (token: IToken, amount: string, scaleFactor: number): cosmos.base.v1beta1.ICoin {
-  const chainFeeAmount = new Big(amount).times(scaleFactor).toFixed(0);
+function convertTokenTofee (token: IToken, amount: string): cosmos.base.v1beta1.ICoin {
+  const decimals = token.erc20?.decimals || token.cosmos?.decimals || 6;
+  const decimal = new Big(10).pow(decimals);
+  const feeAmount = new Big(amount).times(decimal).round(0, Big.roundUp).toString();
 
   if (token.erc20) {
     return {
       denom: `gravity${token.erc20.address}`,
-      amount: chainFeeAmount
+      amount: feeAmount
     };
   } else if (token.cosmos) {
     return {
       denom: token.cosmos.denom,
-      amount: chainFeeAmount
+      amount: feeAmount
     };
   } else {
     const errorMessage = 'No token info!';
