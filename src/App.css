@@ -1,24 +1,28 @@
-@import 'fonts.css';
+@import "fonts.css";
 
 html {
   min-height: 100vh;
-  --blue: #007BB5;
-  --green: #1DDB3C;
-  --red: #E31616;
+  --blue: #007bb5;
+  --green: #1ddb3c;
+  --red: #e31616;
   --base-00: #fff;
-  --base-01: #F2F4F8;
-  --base-02: #D1D4D8;
-  --base-03: #81858B;
+  --base-01: #f2f4f8;
+  --base-02: #d1d4d8;
+  --base-03: #81858b;
   --base-04: #616161;
-  --base-05: #3A3A3A;
+  --base-05: #3a3a3a;
   --base-06: #252628;
-  --base-07: #1B1C1E;
-  --accent: linear-gradient(90deg, #872FEA 0%, #0ACCDE 100%);
-  --accent-deep: linear-gradient(90deg, rgba(138, 43, 234, 0.8) 0%, rgba(5, 210, 221, 0.8) 102.05%);
+  --base-07: #1b1c1e;
+  --accent: linear-gradient(90deg, #872fea 0%, #0accde 100%);
+  --accent-deep: linear-gradient(
+    90deg,
+    rgba(138, 43, 234, 0.8) 0%,
+    rgba(5, 210, 221, 0.8) 102.05%
+  );
 }
 
 .dark {
-  --app-background: url(./images/bg-dark.svg) center fixed no-repeat, linear-gradient(#000000, #000000);
+  --app-background: linear-gradient(#000000, #000000);
   --app-font-color: var(--base-00);
   --toastify-color-dark: var(--base-06);
   --input-color: var(--base-03);
@@ -28,7 +32,7 @@ html {
 }
 
 .light {
-  --app-background: url(./images/bg-light.svg) center fixed no-repeat, linear-gradient(var(--base-01), var(--base-01));
+  --app-background: linear-gradient(var(--base-01), var(--base-01));
   --app-font-color: var(--base-05);
   --input-color: var(--base-05);
   --input-border-color: var(--base-05);
@@ -44,7 +48,7 @@ html {
   flex-direction: column;
   background-size: cover;
   color: var(--app-font-color);
-  font-family: 'Futura';
+  font-family: "Futura";
 }
 
 .container {
@@ -65,12 +69,13 @@ html {
 }
 
 .mobile-guide-accent {
-  color: #0ACCDE;
+  color: #0accde;
 }
 
 @media all and (width < 768px) {
   .App.dark {
-    --app-background: url(./images/bg-dark-mobile.svg) center fixed no-repeat, linear-gradient(#000000, #000000);
+    --app-background: url(./images/bg-dark-mobile.svg) center fixed no-repeat,
+      linear-gradient(#000000, #000000);
   }
 
   .container {
